@@ -15,7 +15,7 @@ logger.setLevel(logging.DEBUG)
 bot = Bot(token=TOKEN) 
 dp = Dispatcher(bot) 
 admin_telegram_username = ['serdyuuuk','sasha_reshetar']
-groups = [Group(1, '28/02 10:00-10:30', 'link', 1, []), Group(2, '28/02 9:00-9:30', 'link', 10, []), Group(3, '29/02 11:00-11:30', 'link', 30, [])]
+groups = [Group('28/02 10:00-10:30', 'link', 1, []), Group('28/02 9:00-9:30', 'link', 10, []), Group('29/02 11:00-11:30', 'link', 30, [])]
 users= []
 commands = ('Записатись', 'Обновити акаунт')
  
@@ -24,6 +24,12 @@ async def start_handler(message: types.Message):
     if message.from_user.id not in users:
         users.append(message.from_user.id)
         
+    keyboard_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard_markup.add(*(types.KeyboardButton(command) for command in commands))
+    await message.answer('Виберіть дію:' + message.from_user.username, reply_markup=keyboard_markup)
+    
+@dp.message_handler(text='Назад')
+async def back_handler(message: types.Message)
     keyboard_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard_markup.add(*(types.KeyboardButton(command) for command in commands))
     await message.answer('Виберіть дію:' + message.from_user.username, reply_markup=keyboard_markup)
@@ -76,9 +82,10 @@ async def update_account(message: types.Message):
 @dp.message_handler(text="Записатись")
 async def signup_handler(message: types.Message):
     available_groups = []
-    for group in groups:
+    for i, group in enumerate(groups):
         if group.remains() > 0:
-            available_groups.append(group.description + ' Місця:' + str(group.remains()))
+            available_groups.append(str(i+1) + '. ' + group.description + ' Місця:' + str(group.remains()))
+    available_groups.append('Назад')
     keyboard_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     for group in available_groups:
         keyboard_markup.add(types.KeyboardButton(group))
