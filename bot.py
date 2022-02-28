@@ -21,9 +21,10 @@ commands = ('Записатись', 'Оновити аккаунт')
 
 
 @dp.message_handler(commands='upd_data')
-async def upd_data(message: types.Message):
-    if message.from_user.id in admin_telegram_username:
+async def do_upd_data(message: types.Message):
+    if message.from_user.username in admin_telegram_username:
         upd_data()
+        await message.answer('Оновлено!')
 
 
 @dp.message_handler(commands='start') 
