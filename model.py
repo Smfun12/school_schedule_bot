@@ -1,15 +1,18 @@
  
 class Group:
  
-    def __init__(self, date, time, link, available_place=0, usersId=[]):
-        self.date = date
-        self.time = time
+    def __init__(self, id, description, link, available_place=0, users=[]):
+        self.id = id
+        self.description = str(id) + '.Група:' + description
         self.link = link
         self.available_place = available_place
-        self.usesrId = usersId
+        self.users = users
         
     def addUser(self, userId):
-        usersId.append(userId)
+        self.users.append(userId)
+        
+    def remains(self):
+        return self.available_place - len(self.users);
         
     def contains(self, userId):
         if user in self.usersId:
@@ -18,4 +21,4 @@ class Group:
             return False
             
     def __str__(self):
-        return 'Години:' + self.time + ', к-сть вільних місць=' + str(self.available_place)
+        return str(self.id) + '.Група:' + str(self.users) + ', к-сть вільних місць=' + str(self.available_place)
