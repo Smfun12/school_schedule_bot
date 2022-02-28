@@ -26,23 +26,25 @@ class Frame:
 frame = Frame()
 
 
-def get_login_password(telegram_id):
+def get_login_password(telegram_id, username):
     """
     Takes telegram id of the user and returns their login and password
     Registers new users
     :param telegram_id: telegram id of the user
+    :param username: username
     :return: login, password
     """
     user_idx = frame.df[frame.df['telegram_id'] == str(telegram_id)].index
     if user_idx.shape[0] == 0:
-        __register_user(telegram_id)
+        __register_user(telegram_id, username)
         user_idx = [frame.users_num]
     user = frame.df.iloc[user_idx].to_numpy()[0]
     return user[0], user[1]
 
 
-def __register_user(telegram_id):
+def __register_user(telegram_id, username):
     __update_cell(frame.users_num, 2, telegram_id)
+    __update_cell(frame.users_num, 3, username)
 
 
 def __is_registered(telegram_id):
