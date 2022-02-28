@@ -76,9 +76,9 @@ async def update_account(message: types.Message):
 @dp.message_handler(text="Записатись")
 async def signup_handler(message: types.Message):
     available_groups = []
-    for group in groups:
+    for i, group in enumerate(groups):
         if group.remains() > 0:
-            available_groups.append(group.description + ' Місця:' + str(group.remains()))
+            available_groups.append(str(i+1) + '. ' + group.description + ' Місця:' + str(group.remains()))
     keyboard_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     for group in available_groups:
         keyboard_markup.add(types.KeyboardButton(group))

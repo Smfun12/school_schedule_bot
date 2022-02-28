@@ -1,8 +1,7 @@
  
 class Group:
  
-    def __init__(self, id, description, link, available_place=0, users=[]):
-        self.id = id
+    def __init__(self, description, link, available_place=0, users=[]):
         self.description = str(id) + '.Група:' + description
         self.link = link
         self.available_place = available_place
@@ -21,4 +20,4 @@ class Group:
             return False
             
     def __str__(self):
-        return str(self.id) + '.Група:' + str(self.users) + ', к-сть вільних місць=' + str(self.available_place)
+        return 'Група:' + str(self.users) + ', к-сть вільних місць=' + str(self.available_place)
