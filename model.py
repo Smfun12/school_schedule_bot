@@ -1,12 +1,3 @@
-class Schedule: 
-    def __init__(self, day, hour, number_of_people): 
-        self.day = day 
-        self.hour = hour
-        self.number_of_people = number_of_people 
-         
-    def __str__(self): 
-        return 'Day='+ self.day + ', hour='+ self.hour + ', number_of_people='+ str(self.number_of_people) 
-
  
 class Group:
  
