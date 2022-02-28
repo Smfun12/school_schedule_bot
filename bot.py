@@ -30,7 +30,7 @@ async def start_handler(message: types.Message):
 
     
 @dp.message_handler(text='Назад')
-async def back_handler(message: types.Message)
+async def back_handler(message: types.Message):
     keyboard_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard_markup.add(*(types.KeyboardButton(command) for command in commands))
     await message.answer('Виберіть дію:' + message.from_user.username, reply_markup=keyboard_markup)
