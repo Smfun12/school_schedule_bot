@@ -23,8 +23,7 @@ class Frame:
         self.users_num = self.df.shape[0] - (self.df['telegram_id'] == '').sum()
 
     def upd_data(self):
-        self.table = client.open(MAIN_TABLE)
-        self.sheet = self.table.worksheet('data')
+        self.sheet = client.open(MAIN_TABLE).worksheet('data')
         data = np.array(self.sheet.get_all_values())
         records = data[1:]
         columns = data[0]
