@@ -15,7 +15,7 @@ logger.setLevel(logging.DEBUG)
 bot = Bot(token=TOKEN) 
 dp = Dispatcher(bot) 
 admin_telegram_username = ['serdyuuuk','sasha_reshetar']
-groups = [Group('28/02 10:00-10:30', 'link', 1, []), Group('28/02 9:00-9:30', 'link', 10, []), Group('29/02 11:00-11:30', 'link', 30, [])]
+groups = [Group(1, '28/02 10:00-10:30', 'link', 1, []), Group(2, '28/02 9:00-9:30', 'link', 10, []), Group(3, '29/02 11:00-11:30', 'link', 30, [])]
 users= []
 commands = ('Записатись', 'Обновити акаунт')
  
@@ -27,12 +27,14 @@ async def start_handler(message: types.Message):
     keyboard_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard_markup.add(*(types.KeyboardButton(command) for command in commands))
     await message.answer('Виберіть дію:' + message.from_user.username, reply_markup=keyboard_markup)
+
     
 @dp.message_handler(text='Назад')
 async def back_handler(message: types.Message)
     keyboard_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard_markup.add(*(types.KeyboardButton(command) for command in commands))
     await message.answer('Виберіть дію:' + message.from_user.username, reply_markup=keyboard_markup)
+
 
 @dp.message_handler(regexp = '^Група:*') 
 async def start_handler(message: types.Message):
