@@ -10,12 +10,21 @@ from constant import SCOPE, JSON_ROUTE, MAIN_TABLE
 # open main table
 credentials = ServiceAccountCredentials.from_json_keyfile_name(JSON_ROUTE, SCOPE)
 client = gspread.authorize(credentials)
-table = client.open(MAIN_TABLE)
 
 
 class Frame:
     def __init__(self):
-        self.sheet = table.worksheet('data')
+        self.table = client.open(MAIN_TABLE)
+        self.sheet = self.table.worksheet('data')
+        data = np.array(self.sheet.get_all_values())
+        records = data[1:]
+        columns = data[0]
+        self.df = pd.DataFrame(records, columns=columns)
+        self.users_num = self.df.shape[0] - (self.df['telegram_id'] == '').sum()
+
+    def upd_data(self):
+        self.table = client.open(MAIN_TABLE)
+        self.sheet = self.table.worksheet('data')
         data = np.array(self.sheet.get_all_values())
         records = data[1:]
         columns = data[0]
@@ -24,6 +33,10 @@ class Frame:
 
 
 frame = Frame()
+
+
+def upd_data():
+    frame.upd_data()
 
 
 def get_login_password(telegram_id, username):

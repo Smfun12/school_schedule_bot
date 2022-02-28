@@ -6,7 +6,7 @@ import random
 from aiogram import Bot, Dispatcher, executor, types 
 from constant import TOKEN
 from model import Group
-from SheetsProcessor import get_login_password
+from SheetsProcessor import get_login_password, upd_data
 
 logger = logging.getLogger(__name__) 
 logger.setLevel(logging.DEBUG) 
@@ -18,7 +18,14 @@ admin_telegram_username = ['serdyuuuk','sasha_reshetar']
 groups = [Group(1, '28/02 10:00-10:30', 'link', 1, []), Group(2, '28/02 9:00-9:30', 'link', 10, []), Group(3, '29/02 11:00-11:30', 'link', 30, [])]
 users= []
 commands = ('Записатись', 'Обновити акаунт')
- 
+
+
+@dp.message_handler(commands='upd_data')
+async def upd_data(message: types.Message):
+    if message.from_user.id in admin_telegram_username:
+        upd_data()
+
+
 @dp.message_handler(commands='start') 
 async def start_handler(message: types.Message):
     if message.from_user.id not in users:
