@@ -1,7 +1,8 @@
  
 class Group:
  
-    def __init__(self, description, link, available_place=0, users=[]):
+    def __init__(self, id, description, link, available_place=0, users=[]):
+        self.id = id
         self.description = str(id) + '.Група:' + description
         self.link = link
         self.available_place = available_place

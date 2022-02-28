@@ -17,7 +17,7 @@ dp = Dispatcher(bot)
 admin_telegram_username = ['serdyuuuk','sasha_reshetar']
 groups = [Group(1, '28/02 10:00-10:30', 'link', 1, []), Group(2, '28/02 9:00-9:30', 'link', 10, []), Group(3, '29/02 11:00-11:30', 'link', 30, [])]
 users= []
-commands = ('Записатись', 'Обновити акаунт')
+commands = ('Записатись', 'Оновити аккаунт')
 
 
 @dp.message_handler(commands='upd_data')
@@ -67,6 +67,7 @@ async def start_handler(message: types.Message):
         for group in groups:
             if group.remains() > 0:
                 available_groups.append(group.description.split('.')[1])
+        available_groups.append('Назад')
         keyboard_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         for group in available_groups:
             keyboard_markup.add(types.KeyboardButton(group))
@@ -83,7 +84,7 @@ async def give_or_request_account(message: types.Message):
 @dp.message_handler(text='Оновити аккаунт')
 async def update_account(message: types.Message):
     user_id = message.from_user.id
-    user_name = message.from_user.first_name + ' ' + message.from_user.last_name
+    user_name = message.from_user.username
     login, password = get_login_password(user_id, user_name)
     await message.answer('Успішно записаний, аккаунт:\n' + login + ' ' + password + '\nЯкщо не вдається зайти, напиши @serdyuuuk для отримання нового аккаунта')
   
@@ -93,7 +94,7 @@ async def signup_handler(message: types.Message):
     available_groups = []
     for i, group in enumerate(groups):
         if group.remains() > 0:
-            available_groups.append(str(i+1) + '. ' + group.description + ' Місця:' + str(group.remains()))
+            available_groups.append(group.description + ' Місця:' + str(group.remains()))
     available_groups.append('Назад')
     keyboard_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     for group in available_groups:
@@ -103,7 +104,7 @@ async def signup_handler(message: types.Message):
 @dp.message_handler(regexp = '^[0-9]+\.Група:*')
 async def group_handler(message: types.Message):
     index = int(message.text.split('.')[0])
-    if message.from_user.id not in groups[index].users:
+    if message.from_user.id not in groups[index-1].users:
         groups[index-1].addUser(message.from_user.id)
         await message.answer('Вас записано в ' + groups[index-1].description + '. Лінк: ' + groups[index-1].link)
     else :
