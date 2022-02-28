@@ -1,5 +1,5 @@
 # Change token
-TOKEN = '5129253555:AAFQJvLH0Uvrnpbd77ukEITU2E8R3SN27to'
+TOKEN = os.getenv('BOTAPIKEY')
 
 SCOPE = [
     "https://spreadsheets.google.com/feeds",
