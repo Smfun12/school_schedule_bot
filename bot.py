@@ -65,8 +65,7 @@ async def start_handler(message: types.Message):
     else:
         available_groups = []
         for group in groups:
-            if group.remains() > 0:
-                available_groups.append(group.description.split('.')[1])
+            available_groups.append(group.description.split('.')[1])
         available_groups.append('Назад')
         keyboard_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         for group in available_groups:
