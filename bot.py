@@ -15,7 +15,7 @@ logger.setLevel(logging.DEBUG)
 bot = Bot(token=TOKEN) 
 dp = Dispatcher(bot) 
 admin_telegram_username = ['serdyuuuk','sasha_reshetar']
-groups = [Group(1, '28/02 10:00-10:30', 'link', 1), Group(2, '28/02 9:00-9:30', 'link', 10), Group(3, '29/02 11:00-11:30', 'link', 30)]
+groups = [Group(1, '28/02 10:00-10:30', 'link', 1, []), Group(2, '28/02 9:00-9:30', 'link', 10, []), Group(3, '29/02 11:00-11:30', 'link', 30, [])]
 users= []
 commands = ('Записатись', 'Обновити акаунт')
  
@@ -66,7 +66,7 @@ async def give_or_request_account(message: types.Message):
     await message.answer('Успішно записаний, аккаунт:\n' + login + ' ' + password + '\nЯкщо не вдається зайти, напиши @serdyuuuk для отримання нового аккаунта')
  
 @dp.message_handler(text='Оновити аккаунт')
-async def give_or_request_account(message: types.Message):
+async def update_account(message: types.Message):
     user_id = message.from_user.id
     user_name = message.from_user.first_name + ' ' + message.from_user.last_name
     login, password = get_login_password(user_id, user_name)
@@ -86,25 +86,20 @@ async def signup_handler(message: types.Message):
     
 @dp.message_handler(regexp = '^[0-9]+\.Група:*')
 async def group_handler(message: types.Message):
-    index = 0
-    for i, g in enumerate(groups):
-        if g.id == message.text.split('.')[0]:
-            index = i
-            break
-    if message.from_user.id not in groups[index].users :
-        groups[index].addUser(message.from_user.id)
-        await message.answer('Вас записано в ' + groups[index].description + '. Лінк: ' + groups[index].link)
+    index = int(message.text.split('.')[0])
+    if message.from_user.id not in groups[index].users:
+        groups[index-1].addUser(message.from_user.id)
+        await message.answer('Вас записано в ' + groups[index-1].description + '. Лінк: ' + groups[index-1].link)
     else :
         await message.answer('Ви вже записані')
-    for el in groups:
-        print(el.users)
+    
     keyboard_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard_markup.add(*(types.KeyboardButton(command) for command in commands))
     await message.answer('Виберіть дію:', reply_markup=keyboard_markup)
  
 @dp.message_handler() 
 async def hello(message: types.Message):
-    await message.answer("Your text: " + str(message.text)) 
+    await message.answer("Я попугай, ви сказали: " + str(message.text)) 
 
 if __name__ == '__main__': 
     executor.start_polling(dp, skip_updates=True)
