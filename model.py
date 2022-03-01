@@ -1,3 +1,13 @@
+class User: 
+    def __init__(self, id, username, groups=[]):
+        self.id = id
+        self.username = username
+        self.groups = groups
+
+    def __str__(self):
+        return 'Користувач:' + self.username + ', групи=' + str(self.groups)
+
+
  
 class Group:
  

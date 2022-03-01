@@ -13,9 +13,9 @@ client = gspread.authorize(credentials)
 
 
 class Frame:
-    def __init__(self):
+    def __init__(self, sheet='data'):
         self.table = client.open(MAIN_TABLE)
-        self.sheet = self.table.worksheet('data')
+        self.sheet = self.table.worksheet(sheet)
         data = np.array(self.sheet.get_all_values())
         records = data[1:]
         columns = data[0]
@@ -32,11 +32,13 @@ class Frame:
 
 
 frame = Frame()
-
+groups = Frame(sheet='groups')
 
 def upd_data():
     frame.upd_data()
 
+def fetch_user_with_groups():
+    return groups.df[['name', 'group']]
 
 def get_login_password(telegram_id, username):
     """
