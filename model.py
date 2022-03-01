@@ -1,12 +1,21 @@
+class BotObject:
+    def __init__(self, groups, users, admin_telegram_ids, writeName):
+        self.groups = groups
+        self.users = users
+        self.admin_telegram_ids = admin_telegram_ids
+        self.writeName = writeName
+
+
+
 class User: 
-    def __init__(self, id, username, description='', groups=[]):
+    def __init__(self, id, username, description=' ', groups=[]):
         self.id = id
         self.username = username
         self.description = description
         self.groups = groups
 
     def __str__(self):
-        return 'Користувач:' + str(self.username) + ' ' + self.description + ', групи=' + str(self.groups)
+        return 'Користувач:' + str(self.id) + ',' + self.username + ','+ self.description + ', групи=' + str(self.groups)
 
 
  
