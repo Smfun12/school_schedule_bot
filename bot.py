@@ -71,14 +71,14 @@ async def start_handler(message: types.Message):
         users.append(User(id, message.from_user.username, []))
     keyboard_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard_markup.add(*(types.KeyboardButton(command) for command in commands))
-    await message.answer('Виберіть дію:' + message.from_user.username, reply_markup=keyboard_markup)
+    await message.answer('Виберіть дію:', reply_markup=keyboard_markup)
 
     
 @dp.message_handler(text='Назад')
 async def back_handler(message: types.Message):
     keyboard_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard_markup.add(*(types.KeyboardButton(command) for command in commands))
-    await message.answer('Виберіть дію:' + message.from_user.username, reply_markup=keyboard_markup)
+    await message.answer('Виберіть дію:', reply_markup=keyboard_markup)
 
 
 @dp.message_handler(regexp = '^Група:*') 
