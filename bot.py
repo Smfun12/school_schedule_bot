@@ -15,9 +15,9 @@ logger.setLevel(logging.DEBUG)
 bot = Bot(token=TOKEN) 
 dp = Dispatcher(bot) 
 admin_telegram_username = ['serdyuuuk','sasha_reshetar']
-groups = [Group(1, '28/02 10:00-10:30', 'link', 1, []), Group(2, '28/02 9:00-9:30', 'link', 10, []), Group(3, '29/02 11:00-11:30', 'link', 30, [])]
+groups = [Group(1, '01/03 15:00-17:00', 'https://us02web.zoom.us/j/88456997619?pwd=V0ZKNk5zSnZMb2s5UG1wOWxJSktGZz09', 25, [])]
 users= []
-commands = ('Записатись', 'Оновити аккаунт')
+commands = ('Записатись', 'Аккаунт з Minecraft')
 
 
 @dp.message_handler(commands='upd_data')
@@ -81,7 +81,7 @@ async def give_or_request_account(message: types.Message):
     login, password = get_login_password(user_id, user_name)
     await message.answer('Успішно записаний, аккаунт:\n' + login + ' ' + password + '\nЯкщо не вдається зайти, напиши @serdyuuuk для отримання нового аккаунта')
  
-@dp.message_handler(text='Оновити аккаунт')
+@dp.message_handler(text='Аккаунт з Minecraft')
 async def update_account(message: types.Message):
     user_id = message.from_user.id
     user_name = message.from_user.username
