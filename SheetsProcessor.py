@@ -13,9 +13,9 @@ client = gspread.authorize(credentials)
 
 
 class Frame:
-    def __init__(self):
+    def __init__(self, sheet='data'):
         self.table = client.open(MAIN_TABLE)
-        self.sheet = self.table.worksheet('data')
+        self.sheet = self.table.worksheet(sheet)
         data = np.array(self.sheet.get_all_values())
         records = data[1:]
         columns = data[0]
@@ -32,13 +32,18 @@ class Frame:
 
 
 frame = Frame()
-
+group_frame = Frame(sheet='groups')
 
 def upd_data():
     frame.upd_data()
 
+def upd_group_data():
+    group_frame.upd_data()
 
-def get_login_password(telegram_id, username):
+def fetch_user_with_groups():
+    return (group_frame.df['name'].tolist(),group_frame.df['telegram_id'], group_frame.df['group'].tolist())
+
+def get_login_password(telegram_id, username, groups):
     """
     Takes telegram id of the user and returns their login and password
     Registers new users
@@ -48,15 +53,16 @@ def get_login_password(telegram_id, username):
     """
     user_idx = frame.df[frame.df['telegram_id'] == str(telegram_id)].index
     if user_idx.shape[0] == 0:
-        __register_user(telegram_id, username)
+        __register_user(telegram_id, username, groups)
         user_idx = [frame.users_num]
     user = frame.df.iloc[user_idx].to_numpy()[0]
     return user[0], user[1]
 
 
-def __register_user(telegram_id, username):
+def __register_user(telegram_id, username, groups):
     __update_cell(frame.users_num, 2, telegram_id)
     __update_cell(frame.users_num, 3, username)
+    __update_cell(frame.users_num, 4, groups)
 
 
 def __is_registered(telegram_id):
