@@ -6,7 +6,7 @@ import random
 from aiogram import Bot, Dispatcher, executor, types 
 from constant import TOKEN, groups, admin_telegram_ids, commands
 from model import Group, User, BotObject
-from SheetsProcessor import get_login_password, upd_data,upd_group_data, fetch_user_with_groups
+from SheetsProcessor import get_login_password, upd_data, fetch_user_with_groups
 from util import *
 
 
@@ -24,8 +24,7 @@ botObject = BotObject(groups=groups, users=[], admin_telegram_ids=admin_telegram
 @dp.message_handler(commands='upd_data')
 async def do_upd_data(message: types.Message):
     if is_admin(message.from_user.id, botObject.admin_telegram_ids):
-        #upd_data()
-        upd_group_data()
+        upd_data()
         botObject.groups, botObject.users = fetch_data()
         await message.answer('Оновлено!')
 
@@ -35,7 +34,6 @@ async def start_handler(message: types.Message):
     id = message.from_user.id
     user = find_user_by_id(id, botObject.users)
     if user is None:
-        print('user is none')
         botObject.users.append(User(id, message.from_user.username))
     keyboard_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard_markup.add(*(types.KeyboardButton(command) for command in commands))
@@ -55,7 +53,7 @@ async def setname_handler(message: types.Message):
 
 @dp.message_handler(regexp = '^Група:*') 
 async def send_links(message: types.Message):
-    if not is_admin(message.from_user.username, botObject.admin_telegram_ids):
+    if not is_admin(message.from_user.id, botObject.admin_telegram_ids):
         await message.answer('Недостатньо прав')
     else:
         requested_group = None
@@ -63,14 +61,18 @@ async def send_links(message: types.Message):
             if group.description.split('.')[1] == message.text:
                 requested_group = group
                 break
-        group_users = requested_group.users
+        group_users = []
+        
+        for el in botObject.users:
+            if str(requested_group.id) in el.groups:
+                group_users.append(el.id)
         for user_id in group_users:
             await bot.send_message(user_id, requested_group.link)
         await message.answer('Розсилаю...')
     
 @dp.message_handler(commands='send') 
 async def send_handler(message: types.Message):
-    if not is_admin(message.from_user.username, botObject.admin_telegram_ids):
+    if not is_admin(message.from_user.id, botObject.admin_telegram_ids):
         await message.answer('Недостатньо прав')
     else:
         available_groups = []
@@ -95,7 +97,6 @@ async def give_or_request_account(message: types.Message):
 @dp.message_handler(text='Аккаунт з Minecraft')
 async def update_account(message: types.Message):
     curr_user = find_user_by_id(message.from_user.id, botObject.users)
-    print('Curr user=' +  str(curr_user))
     if curr_user is None:
         curr_user = User(message.from_user.id, message.from_user.username, groups=[])
     login, password = get_login_password(curr_user.id, curr_user.username, curr_user.groups)
@@ -119,15 +120,18 @@ async def signup_handler(message: types.Message):
 @dp.message_handler(regexp = '^[0-9]+\.Група:*')
 async def group_handler(message: types.Message):
     group_id = int(message.text.split('.')[0])
-    if not user_is_in_group(message.from_user.id, group_id, botObject.users):
-        botObject.groups[group_id-1].addUser(message.from_user.id)
-        for user in botObject.users:
-            if user.id == message.from_user.id:
-                user.groups.append(botObject.groups[group_id-1].id)
-                break
-        await message.answer('Вас записано в ' + botObject.groups[group_id-1].description + '. Лінк: ' + botObject.groups[group_id-1].link)
-    else :
-        await message.answer('Ви вже записані')
+    try:
+        if not user_is_in_group(message.from_user.id, group_id, botObject.users):
+            botObject.groups[group_id-1].addUser(message.from_user.id)
+            for user in botObject.users:
+                if user.id == message.from_user.id:
+                    user.groups.append(str(botObject.groups[group_id-1].id))
+                    break
+            await message.answer('Вас записано в ' + botObject.groups[group_id-1].description + '. Лінк: ' + botObject.groups[group_id-1].link)
+        else :
+            await message.answer('Ви вже записані')
+    except:
+        await message.answer('Вас не знайдено в базі, додайтесь спочатку через команду /start')
     
 
     keyboard_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)

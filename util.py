@@ -5,9 +5,12 @@ def find_user_by_id(id, users):
     for user in users:
         if str(user.id) == str(id):
             return user
+    return None
 
 def user_is_in_group(user_id, group_id, users):
     user = find_user_by_id(user_id, users)
+    if user is None:
+        raise Exception('User not found')
     return str(group_id) in user.groups
     
     
@@ -38,7 +41,5 @@ def fetch_data():
             if str(el.id) in fetch_groups[i] and not user_in_group(el, user):
                 el.users.append(user)
                 el.available_place -= 1
-    for el in new_groups:
-        print(el)
     return new_groups, users_copy
 

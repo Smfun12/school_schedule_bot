@@ -32,17 +32,14 @@ class Frame:
         self.users_num = self.df.shape[0] - (self.df['telegram_id'] == '').sum()
 
 
-frame = Frame()
-group_frame = Frame(sheetName='groups')
+frame = Frame(sheetName='data')
+
 
 def upd_data():
     frame.upd_data()
-
-def upd_group_data():
-    group_frame.upd_data()
     
 def fetch_user_with_groups():
-    return group_frame.df['telegram_id'].tolist(), group_frame.df['name'].tolist(), group_frame.df['group'].tolist()
+    return frame.df['telegram_id'].tolist(), frame.df['name'].tolist(), frame.df['group'].tolist()
 
 def get_login_password(telegram_id, username, groups):
     """
@@ -52,21 +49,19 @@ def get_login_password(telegram_id, username, groups):
     :param username: username
     :return: login, password
     """
-    user_idx = group_frame.df[frame.df['telegram_id'] == str(telegram_id)].index
+    user_idx = frame.df[frame.df['telegram_id'] == str(telegram_id)].index
     
     if user_idx.shape[0] == 0:
         __register_user(telegram_id, username, groups)
-        user_idx = [frame.users_num]
+        user_idx = [frame.users_num - 1]
     user = frame.df.iloc[user_idx].to_numpy()[0]
     return user[0], user[1]
-
-
+    
+    
 def __register_user(telegram_id, username, groups):
-    #__update_cell(frame.users_num, 2, telegram_id)
-    #__update_cell(frame.users_num, 3, username)
-    __update_cell(group_frame, group_frame.users_num, 0, telegram_id)
-    __update_cell(group_frame, group_frame.users_num, 1, username)
-    __update_cell(group_frame, group_frame.users_num, 2, groups)
+    __update_cell(frame, frame.users_num, 2, telegram_id)
+    __update_cell(frame, frame.users_num, 3, username)
+    __update_cell(frame, frame.users_num, 4, groups)
 
 
 def __is_registered(telegram_id):

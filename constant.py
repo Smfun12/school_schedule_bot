@@ -14,6 +14,6 @@ JSON_ROUTE = "CheQuest.json"
 
 MAIN_TABLE = 'test_sheet_'
 
-admin_telegram_ids = ['serdyuuuk','481036873']
+admin_telegram_ids = ['342172710','481036873']
 groups = [Group(1, '01/03 15:00-17:00', 'link', 25, []), Group(2, '02/03 10:00-12:00', 'link', 30, [])]
 commands = ('Записатись', 'Аккаунт з Minecraft', 'Ввести дані')
