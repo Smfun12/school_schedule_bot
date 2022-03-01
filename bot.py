@@ -17,7 +17,9 @@ dp = Dispatcher(bot)
 admin_telegram_username = ['serdyuuuk','sasha_reshetar']
 groups = [Group(1, '01/03 15:00-17:00', 'https://us02web.zoom.us/j/88456997619?pwd=V0ZKNk5zSnZMb2s5UG1wOWxJSktGZz09', 25, [])]
 users= []
-commands = ('Записатись', 'Аккаунт з Minecraft')
+commands = ('Записатись', 'Аккаунт з Minecraft', 'Вести дані')
+
+writeName = False
 
 def find_user_by_id(id):
     for user in users:
@@ -68,7 +70,7 @@ async def start_handler(message: types.Message):
     id = message.from_user.id
     user = find_user_by_id(id)
     if user is None:
-        users.append(User(id, message.from_user.username, []))
+        users.append(User(id, message.from_user.username))
     keyboard_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard_markup.add(*(types.KeyboardButton(command) for command in commands))
     await message.answer('Виберіть дію:', reply_markup=keyboard_markup)
@@ -80,6 +82,11 @@ async def back_handler(message: types.Message):
     keyboard_markup.add(*(types.KeyboardButton(command) for command in commands))
     await message.answer('Виберіть дію:', reply_markup=keyboard_markup)
 
+@dp.message_handler(text='Вести дані')
+async def setname_handler(message: types.Message):
+    global writeName 
+    writeName = True
+    await message.answer("Ведіть ім'я та вік дитини: ", reply_markup=types.ReplyKeyboardRemove())
 
 @dp.message_handler(regexp = '^Група:*') 
 async def start_handler(message: types.Message):
@@ -124,7 +131,7 @@ async def update_account(message: types.Message):
     curr_user = find_user_by_id(message.from_user.id)
     if curr_user is None:
         curr_user = User(message.from_user.id, message.from_user.username)
-    login, password = get_login_password(curr_user.id, curr_user.username)
+    login, password = get_login_password(curr_user.id, curr_user.username, groups)
     await message.answer('Успішно записаний, аккаунт:\n' + login + ' ' + password + '\nЯкщо не вдається зайти, напиши @serdyuuuk для отримання нового аккаунта')
 
 
@@ -160,9 +167,23 @@ async def group_handler(message: types.Message):
     keyboard_markup.add(*(types.KeyboardButton(command) for command in commands))
     await message.answer('Виберіть дію:', reply_markup=keyboard_markup)
     
-@dp.message_handler() 
-async def hello(message: types.Message):
-    await message.answer("Я попугай, ви сказали: " + str(message.text)) 
+@dp.message_handler()
+async def anyText_handler(message: types.Message):
+    global writeName
+    if writeName:
+        id = message.from_user.id
+        user = find_user_by_id(id)
+        if user is None:
+            users.append(User(id, message.from_user.username, message.text))
+        else:
+            user.description = message.text
+        writeName = False
+        await message.answer('Дані успішно змінено. ' + str(user))
+        keyboard_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        keyboard_markup.add(*(types.KeyboardButton(command) for command in commands))
+        await message.answer('Виберіть дію:', reply_markup=keyboard_markup)
+    else:
+        await message.answer("Я попугай, ви сказали: " + str(message.text)) 
 
 if __name__ == '__main__': 
     executor.start_polling(dp, skip_updates=True)
