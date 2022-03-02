@@ -33,6 +33,7 @@ async def do_upd_data(message: types.Message):
 async def start_handler(message: types.Message):
     id = message.from_user.id
     user = find_user_by_id(id, botObject.users)
+    
     if user is None:
         botObject.users.append(User(id, message.from_user.username))
     keyboard_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -64,7 +65,7 @@ async def send_links(message: types.Message):
         group_users = []
         
         for el in botObject.users:
-            if str(requested_group.id) in el.groups:
+            if str(requested_group.id) == str(el.group):
                 group_users.append(el.id)
         for user_id in group_users:
             await bot.send_message(user_id, requested_group.link)
@@ -89,17 +90,17 @@ async def send_handler(message: types.Message):
 async def give_or_request_account(message: types.Message):
     curr_user = find_user_by_id(message.from_user.id, botObject.users)
     if curr_user is None:
-        curr_user = User(message.from_user.id, message.from_user.username, groups=[])
+        curr_user = User(message.from_user.id, message.from_user.username)
     
-    login, password = get_login_password(curr_user.id, curr_user.username,curr_user.groups)
+    login, password = get_login_password(curr_user.id, curr_user.username,curr_user.group)
     await message.answer('Успішно записаний, аккаунт:\n' + login + ' ' + password + '\nЯкщо не вдається зайти, напиши @serdyuuuk для отримання нового аккаунта')
 
 @dp.message_handler(text='Аккаунт з Minecraft')
 async def update_account(message: types.Message):
     curr_user = find_user_by_id(message.from_user.id, botObject.users)
     if curr_user is None:
-        curr_user = User(message.from_user.id, message.from_user.username, groups=[])
-    login, password = get_login_password(curr_user.id, curr_user.username, curr_user.groups)
+        curr_user = User(message.from_user.id, message.from_user.username)
+    login, password = get_login_password(curr_user.id, curr_user.username, curr_user.group)
     await message.answer('Успішно записаний, аккаунт:\n' + login + ' ' + password + '\nЯкщо не вдається зайти, напиши @serdyuuuk для отримання нового аккаунта')
 
 
@@ -122,10 +123,16 @@ async def group_handler(message: types.Message):
     group_id = int(message.text.split('.')[0])
     try:
         if not user_is_in_group(message.from_user.id, group_id, botObject.users):
+            usr = find_user_by_id(message.from_user.id, botObject.users)
+            for group in botObject.groups:
+                if str(group.id) == str(usr.group):
+                    group.available_place += 1
+                    
             botObject.groups[group_id-1].addUser(message.from_user.id)
+            botObject.groups[group_id-1].available_place -= 1
             for user in botObject.users:
-                if user.id == message.from_user.id:
-                    user.groups.append(str(botObject.groups[group_id-1].id))
+                if str(user.id) == str(message.from_user.id):
+                    user.group = group_id
                     break
             await message.answer('Вас записано в ' + botObject.groups[group_id-1].description + '. Лінк: ' + botObject.groups[group_id-1].link)
         else :

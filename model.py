@@ -8,14 +8,14 @@ class BotObject:
 
 
 class User: 
-    def __init__(self, id, username, description=' ', groups=[]):
+    def __init__(self, id, username, description='description', group=None):
         self.id = id
         self.username = username
         self.description = description
-        self.groups = groups
+        self.group = group
 
     def __str__(self):
-        return 'Користувач:' + str(self.id) + ',' + self.username + ','+ self.description + ', групи=' + str(self.groups)
+        return 'Користувач:' + str(self.id) + ',' + self.username + ','+ self.description + ', групи=' + str(self.group)
 
 
  
@@ -32,7 +32,7 @@ class Group:
         self.users.append(userId)
         
     def remains(self):
-        return self.available_place - len(self.users);
+        return self.available_place;
         
     def contains(self, userId):
         if user in self.usersId:
